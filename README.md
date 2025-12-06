@@ -1,13 +1,13 @@
-# Sample Hardhat Project
+# GovernedToken - ERC20 Token with On-Chain Governance
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a Hardhat Ignition module that deploys that contract.
+This project implements an ERC20 token with basic on-chain governance features:
+- Create governance proposals
+- Vote on proposals (weighted by token balance)
 
-Try running some of the following tasks:
+## Setup
 
 ```shell
-npx hardhat help
+npm install
+npx hardhat compile
 npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat ignition deploy ./ignition/modules/Lock.js
 ```
