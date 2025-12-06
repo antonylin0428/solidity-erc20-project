@@ -1,0 +1,28 @@
+{
+  "name": "solidity-erc20-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/antonylin0428/solidity-erc20-project.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/antonylin0428/solidity-erc20-project/issues"
+  },
+  "homepage": "https://github.com/antonylin0428/solidity-erc20-project#readme",
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.4.0",
+    "ethers": "^6.16.0"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^6.1.0"
+  }
+}
