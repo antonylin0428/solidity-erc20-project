@@ -1,19 +1,25 @@
 require("@nomicfoundation/hardhat-toolbox");
+require("dotenv").config();
+
+console.log(process.env.SEPOLIA_URL);
+console.log(process.env.PRIVATE_KEY);
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
   solidity: "0.8.28",
   networks: {
-    hardhat: {},  // Local blockchain for testing
-    // Sepolia testnet configuration
-    // To deploy: 
-    // 1. Create a .env file in the project root
-    // 2. Add: SEPOLIA_URL=your_infura_or_alchemy_url
-    // 3. Add: PRIVATE_KEY=your_metamask_private_key (starts with 0x)
-    // 4. Run: npx hardhat ignition deploy ./ignition/modules/GovernedToken.js --network sepolia
+    hardhat: {},
     sepolia: {
       url: process.env.SEPOLIA_URL || "",
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : []
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      timeout: 120000,
+      gas: 2100000,
     }
+  },
+  ignition: {
+    timeBeforeBumpingFees: 60000,
+    maxFeeBumps: 3,
+    requiredConfirmations: 1,
   }
 };
+
