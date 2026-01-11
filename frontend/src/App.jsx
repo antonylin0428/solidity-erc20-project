@@ -16,7 +16,7 @@ function App() {
       boxShadow: '0 10px 40px rgba(0,0,0,0.1)' 
     }}>
       <h1 style={{ marginBottom: '30px', color: '#333' }}>
-        🗳️ GovernedToken dApp
+        🗳️ ClubDAO dApp
       </h1>
 
       {!isConnected ? (
@@ -71,9 +71,9 @@ function App() {
           </button>
 
           <div style={{ marginTop: '40px' }}>
-            <h2 style={{ marginBottom: '20px', color: '#666' }}>Coming Soon</h2>
+            <h2 style={{ marginBottom: '20px', color: '#666' }}>ClubDAO Features</h2>
             <p style={{ color: '#888' }}>
-              Token balance, transfers, proposals, and voting features will be added next!
+              Create clubs, manage memberships, create proposals, vote, and execute actions!
             </p>
           </div>
         </div>

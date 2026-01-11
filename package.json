@@ -1,7 +1,7 @@
 {
   "name": "solidity-erc20-project",
   "version": "1.0.0",
-  "description": "ERC20 token with on-chain governance features",
+  "description": "ClubDAO - NFT-based decentralized autonomous organization system with membership NFTs, voting, delegation, and executable proposals",
   "main": "index.js",
   "scripts": {
     "test": "npx hardhat test"
