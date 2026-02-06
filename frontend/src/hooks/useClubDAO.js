@@ -67,8 +67,9 @@ export function useClubDAO(daoAddress) {
      * @param {string} description - What the proposal is about
      * @param {string} target - Address to call (or '0x0' for no action)
      * @param {string} value - ETH amount in wei (or '0' for no ETH)
+     * @param {string} actionData - Encoded function call data (or '0x' for no function call)
      */
-    const createProposal = async (description, target = '0x0000000000000000000000000000000000000000', value = '0') => {
+    const createProposal = async (description, target = '0x0000000000000000000000000000000000000000', value = '0', actionData = '0x') => {
         if (!isValid) throw new Error('Invalid DAO address')
 
         try {
@@ -79,7 +80,7 @@ export function useClubDAO(daoAddress) {
                 args: [
                     description,
                     target,
-                    '0x', // Empty actionData for now (can be extended later)
+                    actionData,
                     BigInt(value),
                 ],
             })

@@ -6,6 +6,7 @@
  * - Displays all proposals for that DAO
  * - Allows creating new proposals
  * - Allows voting on proposals (if member)
+ * - Allows managing members
  * 
  * PROPS:
  * - daoAddress: The address of the ClubDAO contract
@@ -19,6 +20,10 @@ import { useReadContract } from 'wagmi'
 import ClubDAOABI from '../../../artifacts/contracts/ClubDAO.sol/ClubDAO.json'
 import CreateProposal from './CreateProposal'
 import ProposalList from './ProposalList'
+import AddMember from './AddMember'
+import MemberList from './MemberList'
+import DelegationPanel from './DelegationPanel'
+import DAOSettings from './DAOSettings'
 
 export default function DAOView({ daoAddress, onBack }) {
   const { address, isConnected } = useAccount()
@@ -142,9 +147,34 @@ export default function DAOView({ daoAddress, onBack }) {
         )}
       </div>
 
+      {/* Member Management Section */}
+      {isConnected && membershipNFTAddress && (
+        <div style={{ marginBottom: '32px' }}>
+          <h2 style={{ marginBottom: '20px', color: '#333' }}>Member Management</h2>
+          <AddMember 
+            daoAddress={daoAddress} 
+            nftAddress={membershipNFTAddress}
+            isMember={isMember || false}
+          />
+          <MemberList nftAddress={membershipNFTAddress} />
+        </div>
+      )}
+
+      {/* Delegation Section */}
+      {isConnected && address && (
+        <div style={{ marginBottom: '32px' }}>
+          <DelegationPanel 
+            daoAddress={daoAddress} 
+            userAddress={address}
+            isMember={isMember || false}
+          />
+        </div>
+      )}
+
       {/* Create Proposal Section */}
       {isConnected && (
         <div style={{ marginBottom: '32px' }}>
+          <h2 style={{ marginBottom: '20px', color: '#333' }}>Create Proposal</h2>
           <CreateProposal daoAddress={daoAddress} />
         </div>
       )}

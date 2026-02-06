@@ -1,7 +1,8 @@
+import { useReadContract } from 'wagmi'
+import { useClubDAO } from '../hooks/useClubDAO'
+import ClubDAOABI from '../../../artifacts/contracts/ClubDAO.sol/ClubDAO.json'
 
-
-function ProposalCard({ daoAddress, proposalId, isMember, userAddress }) {
-    // Read proposal details
+function ProposalCard({ daoAddress, proposalId, isMember, userAddress, searchTerm = '', statusFilter = 'all' }) {
     const { data: proposal, isLoading } = useReadContract({
         address: daoAddress,
         abi: ClubDAOABI.abi,
@@ -9,29 +10,22 @@ function ProposalCard({ daoAddress, proposalId, isMember, userAddress }) {
         args: [BigInt(proposalId)],
     })
 
-    // Check if user has voted
     const { data: hasVoted } = useReadContract({
         address: daoAddress,
         abi: ClubDAOABI.abi,
         functionName: 'hasVoted',
         args: [BigInt(proposalId), userAddress],
-        query: {
-            enabled: !!userAddress,
-        },
+        query: { enabled: !!userAddress },
     })
 
-    // Check how user voted
     const { data: voteDirection } = useReadContract({
         address: daoAddress,
         abi: ClubDAOABI.abi,
         functionName: 'voteDirection',
         args: [BigInt(proposalId), userAddress],
-        query: {
-            enabled: !!userAddress && hasVoted,
-        },
+        query: { enabled: !!userAddress && hasVoted },
     })
 
-    // Check if proposal passed
     const { data: proposalPassed } = useReadContract({
         address: daoAddress,
         abi: ClubDAOABI.abi,
@@ -43,31 +37,32 @@ function ProposalCard({ daoAddress, proposalId, isMember, userAddress }) {
 
     if (isLoading || !proposal) {
         return (
-            <div style={{
-                padding: '16px',
-                background: 'white',
-                border: '1px solid #ddd',
-                borderRadius: '8px'
-            }}>
+            <div style={{ padding: '16px', background: 'white', border: '1px solid #ddd', borderRadius: '8px' }}>
                 Loading proposal #{proposalId}...
             </div>
         )
     }
 
-    const deadline = Number(proposal.deadline) * 1000 // Convert to milliseconds
+    const deadline = Number(proposal.deadline) * 1000
     const now = Date.now()
     const isExpired = now > deadline
     const canExecute = proposalPassed && isExpired && !proposal.executed
 
+    // Filter by search term
+    if (searchTerm && !proposal.description.toLowerCase().includes(searchTerm.toLowerCase())) {
+        return null
+    }
+
+    // Filter by status
+    if (statusFilter !== 'all') {
+        if (statusFilter === 'active' && (isExpired || proposal.executed)) return null
+        if (statusFilter === 'passed' && (!proposalPassed || proposal.executed)) return null
+        if (statusFilter === 'failed' && (proposalPassed || !isExpired || proposal.executed)) return null
+        if (statusFilter === 'executed' && !proposal.executed) return null
+    }
+
     return (
-        <div style={{
-            padding: '20px',
-            background: 'white',
-            border: '1px solid #ddd',
-            borderRadius: '8px',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-        }}>
-            {/* Proposal Header */}
+        <div style={{ padding: '20px', background: 'white', border: '1px solid #ddd', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
             <div style={{ marginBottom: '16px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '8px' }}>
                     <h3 style={{ margin: 0, color: '#333' }}>Proposal #{proposalId}</h3>
@@ -76,31 +71,17 @@ function ProposalCard({ daoAddress, proposalId, isMember, userAddress }) {
                         borderRadius: '12px',
                         fontSize: '12px',
                         fontWeight: 'bold',
-                        background: proposal.executed ? '#d4edda' :
-                            canExecute ? '#d1ecf1' :
-                                isExpired ? '#f8d7da' : '#fff3cd',
-                        color: proposal.executed ? '#155724' :
-                            canExecute ? '#0c5460' :
-                                isExpired ? '#721c24' : '#856404'
+                        background: proposal.executed ? '#d4edda' : canExecute ? '#d1ecf1' : isExpired ? '#f8d7da' : '#fff3cd',
+                        color: proposal.executed ? '#155724' : canExecute ? '#0c5460' : isExpired ? '#721c24' : '#856404'
                     }}>
-                        {proposal.executed ? 'Executed' :
-                            canExecute ? 'Ready to Execute' :
-                                isExpired ? 'Expired' : 'Active'}
+                        {proposal.executed ? 'Executed' : canExecute ? 'Ready to Execute' : isExpired ? 'Expired' : 'Active'}
                     </div>
                 </div>
-
-                <p style={{
-                    color: '#666',
-                    fontSize: '14px',
-                    margin: '8px 0',
-                    whiteSpace: 'pre-wrap',
-                    wordBreak: 'break-word'
-                }}>
+                <p style={{ color: '#666', fontSize: '14px', margin: '8px 0', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
                     {proposal.description}
                 </p>
             </div>
 
-            {/* Proposal Stats */}
             <div style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
@@ -116,14 +97,12 @@ function ProposalCard({ daoAddress, proposalId, isMember, userAddress }) {
                         {Number(proposal.votesFor)}
                     </div>
                 </div>
-
                 <div>
                     <div style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>Votes Against</div>
                     <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#dc3545' }}>
                         {Number(proposal.votesAgainst)}
                     </div>
                 </div>
-
                 <div>
                     <div style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>Deadline</div>
                     <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#333' }}>
@@ -133,7 +112,6 @@ function ProposalCard({ daoAddress, proposalId, isMember, userAddress }) {
                         {new Date(deadline).toLocaleTimeString()}
                     </div>
                 </div>
-
                 <div>
                     <div style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>Proposer</div>
                     <div style={{ fontSize: '12px', fontFamily: 'monospace', color: '#333' }}>
@@ -142,25 +120,18 @@ function ProposalCard({ daoAddress, proposalId, isMember, userAddress }) {
                 </div>
             </div>
 
-            {/* Voting Section */}
             {isMember && !isExpired && !proposal.executed && (
                 <div style={{ marginBottom: '16px' }}>
                     {hasVoted ? (
-                        <div style={{
-                            padding: '12px',
-                            background: '#e7f3ff',
-                            borderRadius: '8px',
-                            textAlign: 'center'
-                        }}>
+                        <div style={{ padding: '12px', background: '#e7f3ff', borderRadius: '8px', textAlign: 'center' }}>
                             ✅ You voted <strong>{voteDirection ? 'FOR' : 'AGAINST'}</strong> this proposal
                         </div>
                     ) : (
                         <div style={{ display: 'flex', gap: '8px' }}>
                             <button
-                                onClick={async () => {
+                              onClick={async () => {
                                     try {
                                         await vote(proposalId, true)
-                                        // Refresh after a delay to show updated vote
                                         setTimeout(() => window.location.reload(), 2000)
                                     } catch (error) {
                                         alert('Failed to vote. Please try again.')
@@ -180,7 +151,6 @@ function ProposalCard({ daoAddress, proposalId, isMember, userAddress }) {
                             >
                                 Vote FOR
                             </button>
-
                             <button
                                 onClick={async () => {
                                     try {
@@ -209,7 +179,6 @@ function ProposalCard({ daoAddress, proposalId, isMember, userAddress }) {
                 </div>
             )}
 
-            {/* Execute Button */}
             {canExecute && (
                 <button
                     onClick={async () => {
@@ -238,7 +207,6 @@ function ProposalCard({ daoAddress, proposalId, isMember, userAddress }) {
                 </button>
             )}
 
-            {/* Info for non-members */}
             {!isMember && !isExpired && (
                 <div style={{
                     padding: '12px',
