@@ -29,6 +29,7 @@ import { useAccount, useConnect, useDisconnect, useBalance } from 'wagmi'
 import CreateOrganization from './components/CreateOrganization'
 import OrganizationList from './components/OrganizationList'
 import DAOView from './components/DAOView'
+import ToastContainer from './components/ToastContainer'
 
 function App() {
   // useState: Manages whether we should refresh the organization list
@@ -47,11 +48,15 @@ function App() {
   })
 
   return (
-    <div style={{
-      maxWidth: '1200px',
-      margin: '0 auto',
-      padding: '20px'
-    }}>
+    <>
+      {/* Toast Notifications */}
+      <ToastContainer />
+      
+      <div style={{
+        maxWidth: '1200px',
+        margin: '0 auto',
+        padding: '20px'
+      }}>
       {/* Header */}
       <div style={{
         background: 'white',
@@ -159,6 +164,7 @@ function App() {
         </div>
       )}
     </div>
+    </>
   )
 }
 

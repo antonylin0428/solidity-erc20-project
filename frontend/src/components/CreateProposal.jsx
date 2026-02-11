@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useClubDAO } from '../hooks/useClubDAO'
+import { useToast } from '../hooks/useToast'
 import { encodeFunctionData, parseEther, isAddress } from 'viem'
 import ClubDAOABI from '../../../artifacts/contracts/ClubDAO.sol/ClubDAO.json'
 
@@ -11,13 +12,14 @@ export default function CreateProposal({ daoAddress, onProposalCreated }) {
     const [newVotingPeriod, setNewVotingPeriod] = useState('')
     const [newQuorum, setNewQuorum] = useState('')
 
+    const toast = useToast()
     const { createProposal, isPending, isConfirming, isConfirmed, hash } = useClubDAO(daoAddress)
 
     const handleSubmit = async (e) => {
         e.preventDefault()
 
         if (!description.trim()) {
-            alert('Please enter a proposal description')
+            toast.warning('Please enter a proposal description')
             return
         }
 
@@ -28,11 +30,11 @@ export default function CreateProposal({ daoAddress, onProposalCreated }) {
 
             if (proposalType === 'payment') {
                 if (!isAddress(paymentAddress)) {
-                    alert('Invalid payment address')
+                    toast.error('Invalid payment address')
                     return
                 }
                 if (!paymentAmount || parseFloat(paymentAmount) <= 0) {
-                    alert('Invalid payment amount')
+                    toast.error('Invalid payment amount')
                     return
                 }
                 target = paymentAddress
@@ -41,7 +43,7 @@ export default function CreateProposal({ daoAddress, onProposalCreated }) {
 
             } else if (proposalType === 'votingPeriod') {
                 if (!newVotingPeriod || parseInt(newVotingPeriod) <= 0) {
-                    alert('Invalid voting period')
+                    toast.error('Invalid voting period')
                     return
                 }
                 target = daoAddress
@@ -54,7 +56,7 @@ export default function CreateProposal({ daoAddress, onProposalCreated }) {
 
             } else if (proposalType === 'quorum') {
                 if (!newQuorum || parseInt(newQuorum) < 1 || parseInt(newQuorum) > 100) {
-                    alert('Quorum must be between 1 and 100')
+                    toast.error('Quorum must be between 1 and 100')
                     return
                 }
                 target = daoAddress
@@ -67,9 +69,10 @@ export default function CreateProposal({ daoAddress, onProposalCreated }) {
             }
 
             await createProposal(description, target, value, actionData)
+            toast.success('Proposal created successfully!')
         } catch (error) {
             console.error('Failed to create proposal:', error)
-            alert('Failed to create proposal. Please try again.')
+            toast.error('Failed to create proposal. Please try again.')
         }
     }
 

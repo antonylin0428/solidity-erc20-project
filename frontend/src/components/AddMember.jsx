@@ -27,9 +27,11 @@ import { useState } from 'react'
 import { useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
 import { isAddress } from 'viem'
 import { useMembershipNFT } from '../hooks/useMembershipNFT'
+import { useToast } from '../hooks/useToast'
 import ClubDAOABI from '../../../artifacts/contracts/ClubDAO.sol/ClubDAO.json'
 
 export default function AddMember({ daoAddress, nftAddress, isMember, onMemberAdded }) {
+  const toast = useToast()
   // Component state - stores the address input value
   const [newMemberAddress, setNewMemberAddress] = useState('')
   
@@ -68,13 +70,13 @@ export default function AddMember({ daoAddress, nftAddress, isMember, onMemberAd
 
     // Validation 1: Check if it's a valid Ethereum address
     if (!isAddress(newMemberAddress)) {
-      alert('Please enter a valid Ethereum address')
+      toast.error('Please enter a valid Ethereum address')
       return
     }
 
     // Validation 2: Check if there's room for more members
     if (totalSupply >= maxSupply) {
-      alert(`Maximum members (${maxSupply}) reached!`)
+      toast.warning(`Maximum members (${maxSupply}) reached!`)
       return
     }
 
@@ -88,9 +90,10 @@ export default function AddMember({ daoAddress, nftAddress, isMember, onMemberAd
         functionName: 'addMember',
         args: [newMemberAddress],
       })
+      toast.success('Member added successfully!')
     } catch (error) {
       console.error('Failed to add member:', error)
-      alert('Failed to add member. Please try again.')
+      toast.error('Failed to add member. Please try again.')
     }
   }
 

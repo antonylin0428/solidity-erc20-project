@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { isAddress } from 'viem'
 import { useDelegation } from '../hooks/useDelegation'
+import { useToast } from '../hooks/useToast'
 
 export default function DelegationPanel({ daoAddress, userAddress, isMember }) {
+  const toast = useToast()
   const [delegateAddress, setDelegateAddress] = useState('')
   const [showForm, setShowForm] = useState(false)
 
@@ -21,15 +23,16 @@ export default function DelegationPanel({ daoAddress, userAddress, isMember }) {
   const handleDelegate = async (e) => {
     e.preventDefault()
     if (!isAddress(delegateAddress)) {
-      alert('Invalid address')
+      toast.error('Invalid address')
       return
     }
     try {
       await delegate(delegateAddress)
+      toast.success('Delegation successful!')
       setDelegateAddress('')
       setShowForm(false)
     } catch (err) {
-      alert('Failed to delegate')
+      toast.error('Failed to delegate')
     }
   }
 

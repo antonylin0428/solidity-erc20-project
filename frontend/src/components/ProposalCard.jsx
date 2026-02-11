@@ -1,8 +1,25 @@
 import { useReadContract } from 'wagmi'
 import { useClubDAO } from '../hooks/useClubDAO'
+import { useToast } from '../hooks/useToast'
 import ClubDAOABI from '../../../artifacts/contracts/ClubDAO.sol/ClubDAO.json'
+import ProposalActionPreview from './ProposalActionPreview'
+import VotingChart from './VotingChart'
 
 function ProposalCard({ daoAddress, proposalId, isMember, userAddress, searchTerm = '', statusFilter = 'all', onProposalUpdate }) {
+    const toast = useToast()
+    // Get NFT address for member count in voting chart
+    const { data: membershipNFTAddress } = useReadContract({
+        address: daoAddress,
+        abi: ClubDAOABI.abi,
+        functionName: 'membershipNFT',
+    })
+
+    // Get quorum threshold for voting chart
+    const { data: quorumThreshold } = useReadContract({
+        address: daoAddress,
+        abi: ClubDAOABI.abi,
+        functionName: 'quorumThreshold',
+    })
     const { data: proposal, isLoading } = useReadContract({
         address: daoAddress,
         abi: ClubDAOABI.abi,
@@ -82,27 +99,31 @@ function ProposalCard({ daoAddress, proposalId, isMember, userAddress, searchTer
                 </p>
             </div>
 
+            {/* Action Preview - Shows what the proposal will do */}
+            <ProposalActionPreview proposal={proposal} />
+
+            {/* Voting Progress Chart */}
+            {membershipNFTAddress && (
+                <VotingChart
+                    daoAddress={daoAddress}
+                    nftAddress={membershipNFTAddress}
+                    proposal={proposal}
+                    proposalPassed={proposalPassed}
+                    quorumThreshold={quorumThreshold ? Number(quorumThreshold) : 50}
+                />
+            )}
+
+            {/* Proposal Metadata */}
             <div style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
                 gap: '12px',
                 marginBottom: '16px',
                 padding: '12px',
-                background: '#f8f9fa',
+                background: 'white',
+                border: '1px solid #ddd',
                 borderRadius: '8px'
             }}>
-                <div>
-                    <div style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>Votes For</div>
-                    <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#28a745' }}>
-                        {Number(proposal.votesFor)}
-                    </div>
-                </div>
-                <div>
-                    <div style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>Votes Against</div>
-                    <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#dc3545' }}>
-                        {Number(proposal.votesAgainst)}
-                    </div>
-                </div>
                 <div>
                     <div style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>Deadline</div>
                     <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#333' }}>
@@ -132,9 +153,10 @@ function ProposalCard({ daoAddress, proposalId, isMember, userAddress, searchTer
                               onClick={async () => {
                                     try {
                                         await vote(proposalId, true)
+                                        toast.success('Vote cast successfully!')
                                         setTimeout(() => onProposalUpdate?.(), 2000)
                                     } catch (error) {
-                                        alert('Failed to vote. Please try again.')
+                                        toast.error('Failed to vote. Please try again.')
                                     }
                                 }}
                                 disabled={isPending || isConfirming}
@@ -155,9 +177,10 @@ function ProposalCard({ daoAddress, proposalId, isMember, userAddress, searchTer
                                 onClick={async () => {
                                     try {
                                         await vote(proposalId, false)
+                                        toast.success('Vote cast successfully!')
                                         setTimeout(() => onProposalUpdate?.(), 2000)
                                     } catch (error) {
-                                        alert('Failed to vote. Please try again.')
+                                        toast.error('Failed to vote. Please try again.')
                                     }
                                 }}
                                 disabled={isPending || isConfirming}
@@ -185,9 +208,10 @@ function ProposalCard({ daoAddress, proposalId, isMember, userAddress, searchTer
                         if (confirm('Are you sure you want to execute this proposal?')) {
                             try {
                                 await executeProposal(proposalId)
+                                toast.success('Proposal executed successfully!')
                                 setTimeout(() => onProposalUpdate?.(), 2000)
                             } catch (error) {
-                                alert('Failed to execute proposal. Please try again.')
+                                toast.error('Failed to execute proposal. Please try again.')
                             }
                         }
                     }}

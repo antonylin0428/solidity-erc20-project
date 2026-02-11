@@ -24,6 +24,7 @@ import AddMember from './AddMember'
 import MemberList from './MemberList'
 import DelegationPanel from './DelegationPanel'
 import DAOSettings from './DAOSettings'
+import Treasury from './Treasury'
 
 export default function DAOView({ daoAddress, onBack }) {
   const { address, isConnected } = useAccount()
@@ -153,6 +154,12 @@ export default function DAOView({ daoAddress, onBack }) {
           </div>
         )}
       </div>
+
+      {/* Treasury Section */}
+      <Treasury 
+        daoAddress={daoAddress}
+        isMember={isMember || false}
+      />
 
       {/* Member Management Section */}
       {isConnected && membershipNFTAddress && (

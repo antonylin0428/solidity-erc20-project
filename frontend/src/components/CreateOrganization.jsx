@@ -15,8 +15,10 @@
 import { useState } from 'react'
 import { useClubDAOFactory } from '../hooks/useClubDAOFactory'
 import { useAccount } from 'wagmi'
+import { useToast } from '../hooks/useToast'
 
 export default function CreateOrganization({ onOrganizationCreated }) {
+  const toast = useToast()
   // useState hook - manages component state (data that can change)
   // When state changes, React re-renders the component
   const [name, setName] = useState('')
@@ -50,17 +52,18 @@ export default function CreateOrganization({ onOrganizationCreated }) {
     e.preventDefault() // Prevent page refresh
 
     if (!isConnected) {
-      alert('Please connect your wallet first')
+      toast.warning('Please connect your wallet first')
       return
     }
 
     try {
       await createOrganization(name, symbol, parseInt(maxMembers))
+      toast.success('Organization created successfully!')
       // Note: We don't reset the form here because we want to wait for confirmation
       // The parent component will handle the reset after confirmation
     } catch (error) {
       console.error('Failed to create organization:', error)
-      alert('Failed to create organization. Please try again.')
+      toast.error('Failed to create organization. Please try again.')
     }
   }
 
