@@ -29,7 +29,7 @@ import { isAddress } from 'viem'
 import { useMembershipNFT } from '../hooks/useMembershipNFT'
 import ClubDAOABI from '../../../artifacts/contracts/ClubDAO.sol/ClubDAO.json'
 
-export default function AddMember({ daoAddress, nftAddress, isMember }) {
+export default function AddMember({ daoAddress, nftAddress, isMember, onMemberAdded }) {
   // Component state - stores the address input value
   const [newMemberAddress, setNewMemberAddress] = useState('')
   
@@ -121,7 +121,7 @@ export default function AddMember({ daoAddress, nftAddress, isMember }) {
         <button
           onClick={() => {
             setNewMemberAddress('')
-            window.location.reload() // Refresh to show updated member count
+            onMemberAdded?.()
           }}
           style={{
             marginTop: '10px',

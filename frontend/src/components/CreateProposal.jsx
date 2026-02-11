@@ -3,7 +3,7 @@ import { useClubDAO } from '../hooks/useClubDAO'
 import { encodeFunctionData, parseEther, isAddress } from 'viem'
 import ClubDAOABI from '../../../artifacts/contracts/ClubDAO.sol/ClubDAO.json'
 
-export default function CreateProposal({ daoAddress }) {
+export default function CreateProposal({ daoAddress, onProposalCreated }) {
     const [proposalType, setProposalType] = useState('text')
     const [description, setDescription] = useState('')
     const [paymentAddress, setPaymentAddress] = useState('')
@@ -83,7 +83,14 @@ export default function CreateProposal({ daoAddress }) {
                         View transaction on Etherscan
                     </a>
                 )}
-                <button onClick={() => window.location.reload()} style={{ marginTop: '10px', padding: '8px 16px', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+                <button onClick={() => {
+                    setDescription('')
+                    setPaymentAddress('')
+                    setPaymentAmount('')
+                    setNewVotingPeriod('')
+                    setNewQuorum('')
+                    onProposalCreated?.()
+                }} style={{ marginTop: '10px', padding: '8px 16px', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
                     Create Another Proposal
                 </button>
             </div>
@@ -91,7 +98,7 @@ export default function CreateProposal({ daoAddress }) {
     }
 
     return (
-        <div style={{ padding: '24px', ackground: '#f8f9fa', borderRadius: '8px', marginBottom: '24px' }}>
+        <div style={{ padding: '24px', background: '#f8f9fa', borderRadius: '8px', marginBottom: '24px' }}>
             <form onSubmit={handleSubmit}>
                 <div style={{ marginBottom: '20px' }}>
                     <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Proposal Type</label>

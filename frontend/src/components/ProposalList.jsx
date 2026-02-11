@@ -4,7 +4,7 @@ import { useClubDAO } from '../hooks/useClubDAO'
 import ClubDAOABI from '../../../artifacts/contracts/ClubDAO.sol/ClubDAO.json'
 import ProposalCard from './ProposalCard.jsx'
 
-export default function ProposalList({ daoAddress, isMember }) {
+export default function ProposalList({ daoAddress, isMember, onProposalUpdate }) {
     const { address, isConnected } = useAccount()
     const { proposalCount } = useClubDAO(daoAddress)
     
@@ -83,6 +83,7 @@ export default function ProposalList({ daoAddress, isMember }) {
                         userAddress={address}
                         searchTerm={searchTerm}
                         statusFilter={statusFilter}
+                        onProposalUpdate={onProposalUpdate}
                     />
                 ))}
             </div>

@@ -2,7 +2,7 @@ import { useReadContract } from 'wagmi'
 import { useClubDAO } from '../hooks/useClubDAO'
 import ClubDAOABI from '../../../artifacts/contracts/ClubDAO.sol/ClubDAO.json'
 
-function ProposalCard({ daoAddress, proposalId, isMember, userAddress, searchTerm = '', statusFilter = 'all' }) {
+function ProposalCard({ daoAddress, proposalId, isMember, userAddress, searchTerm = '', statusFilter = 'all', onProposalUpdate }) {
     const { data: proposal, isLoading } = useReadContract({
         address: daoAddress,
         abi: ClubDAOABI.abi,
@@ -132,7 +132,7 @@ function ProposalCard({ daoAddress, proposalId, isMember, userAddress, searchTer
                               onClick={async () => {
                                     try {
                                         await vote(proposalId, true)
-                                        setTimeout(() => window.location.reload(), 2000)
+                                        setTimeout(() => onProposalUpdate?.(), 2000)
                                     } catch (error) {
                                         alert('Failed to vote. Please try again.')
                                     }
@@ -155,7 +155,7 @@ function ProposalCard({ daoAddress, proposalId, isMember, userAddress, searchTer
                                 onClick={async () => {
                                     try {
                                         await vote(proposalId, false)
-                                        setTimeout(() => window.location.reload(), 2000)
+                                        setTimeout(() => onProposalUpdate?.(), 2000)
                                     } catch (error) {
                                         alert('Failed to vote. Please try again.')
                                     }
@@ -185,7 +185,7 @@ function ProposalCard({ daoAddress, proposalId, isMember, userAddress, searchTer
                         if (confirm('Are you sure you want to execute this proposal?')) {
                             try {
                                 await executeProposal(proposalId)
-                                setTimeout(() => window.location.reload(), 2000)
+                                setTimeout(() => onProposalUpdate?.(), 2000)
                             } catch (error) {
                                 alert('Failed to execute proposal. Please try again.')
                             }

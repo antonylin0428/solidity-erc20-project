@@ -27,6 +27,13 @@ import DAOSettings from './DAOSettings'
 
 export default function DAOView({ daoAddress, onBack }) {
   const { address, isConnected } = useAccount()
+  const [refreshKey, setRefreshKey] = useState(0)
+  
+  // Callback to trigger refresh without full page reload
+  const handleDataUpdate = () => {
+    setRefreshKey(prev => prev + 1)
+  }
+  
   const { proposalCount, votingPeriod, quorumThreshold } = useClubDAO(daoAddress)
 
   // Read membership NFT address
@@ -149,12 +156,13 @@ export default function DAOView({ daoAddress, onBack }) {
 
       {/* Member Management Section */}
       {isConnected && membershipNFTAddress && (
-        <div style={{ marginBottom: '32px' }}>
+        <div style={{ marginBottom: '32px' }} key={`members-${refreshKey}`}>
           <h2 style={{ marginBottom: '20px', color: '#333' }}>Member Management</h2>
           <AddMember 
             daoAddress={daoAddress} 
             nftAddress={membershipNFTAddress}
             isMember={isMember || false}
+            onMemberAdded={handleDataUpdate}
           />
           <MemberList nftAddress={membershipNFTAddress} />
         </div>
@@ -175,16 +183,23 @@ export default function DAOView({ daoAddress, onBack }) {
       {isConnected && (
         <div style={{ marginBottom: '32px' }}>
           <h2 style={{ marginBottom: '20px', color: '#333' }}>Create Proposal</h2>
-          <CreateProposal daoAddress={daoAddress} />
+          <CreateProposal 
+            daoAddress={daoAddress}
+            onProposalCreated={handleDataUpdate}
+          />
         </div>
       )}
 
       {/* Proposals List */}
-      <div>
+      <div key={`proposals-${refreshKey}`}>
         <h2 style={{ marginBottom: '20px', color: '#333' }}>
           Proposals ({proposalCount})
         </h2>
-        <ProposalList daoAddress={daoAddress} isMember={isMember || false} />
+        <ProposalList 
+          daoAddress={daoAddress} 
+          isMember={isMember || false}
+          onProposalUpdate={handleDataUpdate}
+        />
       </div>
     </div>
   )
