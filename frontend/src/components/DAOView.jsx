@@ -25,14 +25,29 @@ import MemberList from './MemberList'
 import DelegationPanel from './DelegationPanel'
 import DAOSettings from './DAOSettings'
 import Treasury from './Treasury'
+import ProposalDetailView from './ProposalDetailView'
 
 export default function DAOView({ daoAddress, onBack }) {
   const { address, isConnected } = useAccount()
   const [refreshKey, setRefreshKey] = useState(0)
+  const [view, setView] = useState('list') // 'list' or 'detail'
+  const [selectedProposalId, setSelectedProposalId] = useState(null)
   
   // Callback to trigger refresh without full page reload
   const handleDataUpdate = () => {
     setRefreshKey(prev => prev + 1)
+  }
+  
+  // Handler to view proposal details
+  const handleViewDetails = (proposalId) => {
+    setSelectedProposalId(proposalId)
+    setView('detail')
+  }
+  
+  // Handler to go back to list view
+  const handleBackToList = () => {
+    setView('list')
+    setSelectedProposalId(null)
   }
   
   const { proposalCount, votingPeriod, quorumThreshold } = useClubDAO(daoAddress)
@@ -155,59 +170,75 @@ export default function DAOView({ daoAddress, onBack }) {
         )}
       </div>
 
-      {/* Treasury Section */}
-      <Treasury 
-        daoAddress={daoAddress}
-        isMember={isMember || false}
-      />
-
-      {/* Member Management Section */}
-      {isConnected && membershipNFTAddress && (
-        <div style={{ marginBottom: '32px' }} key={`members-${refreshKey}`}>
-          <h2 style={{ marginBottom: '20px', color: '#333' }}>Member Management</h2>
-          <AddMember 
-            daoAddress={daoAddress} 
-            nftAddress={membershipNFTAddress}
-            isMember={isMember || false}
-            onMemberAdded={handleDataUpdate}
-          />
-          <MemberList nftAddress={membershipNFTAddress} />
-        </div>
-      )}
-
-      {/* Delegation Section */}
-      {isConnected && address && (
-        <div style={{ marginBottom: '32px' }}>
-          <DelegationPanel 
-            daoAddress={daoAddress} 
-            userAddress={address}
-            isMember={isMember || false}
-          />
-        </div>
-      )}
-
-      {/* Create Proposal Section */}
-      {isConnected && (
-        <div style={{ marginBottom: '32px' }}>
-          <h2 style={{ marginBottom: '20px', color: '#333' }}>Create Proposal</h2>
-          <CreateProposal 
+      {/* Only show these sections in list view */}
+      {view === 'list' && (
+        <>
+          {/* Treasury Section */}
+          <Treasury 
             daoAddress={daoAddress}
-            onProposalCreated={handleDataUpdate}
+            isMember={isMember || false}
+          />
+
+          {/* Member Management Section */}
+          {isConnected && membershipNFTAddress && (
+            <div style={{ marginBottom: '32px' }} key={`members-${refreshKey}`}>
+              <h2 style={{ marginBottom: '20px', color: '#333' }}>Member Management</h2>
+              <AddMember 
+                daoAddress={daoAddress} 
+                nftAddress={membershipNFTAddress}
+                isMember={isMember || false}
+                onMemberAdded={handleDataUpdate}
+              />
+              <MemberList nftAddress={membershipNFTAddress} />
+            </div>
+          )}
+
+          {/* Delegation Section */}
+          {isConnected && address && (
+            <div style={{ marginBottom: '32px' }}>
+              <DelegationPanel 
+                daoAddress={daoAddress} 
+                userAddress={address}
+                isMember={isMember || false}
+              />
+            </div>
+          )}
+
+          {/* Create Proposal Section */}
+          {isConnected && (
+            <div style={{ marginBottom: '32px' }}>
+              <h2 style={{ marginBottom: '20px', color: '#333' }}>Create Proposal</h2>
+              <CreateProposal 
+                daoAddress={daoAddress}
+                onProposalCreated={handleDataUpdate}
+              />
+            </div>
+          )}
+        </>
+      )}
+
+      {/* Proposals Section - List or Detail View */}
+      {view === 'detail' && selectedProposalId ? (
+        <ProposalDetailView
+          daoAddress={daoAddress}
+          proposalId={selectedProposalId}
+          isMember={isMember || false}
+          userAddress={address}
+          onBack={handleBackToList}
+        />
+      ) : (
+        <div key={`proposals-${refreshKey}`}>
+          <h2 style={{ marginBottom: '20px', color: '#333' }}>
+            Proposals ({proposalCount})
+          </h2>
+          <ProposalList 
+            daoAddress={daoAddress} 
+            isMember={isMember || false}
+            onProposalUpdate={handleDataUpdate}
+            onViewDetails={handleViewDetails}
           />
         </div>
       )}
-
-      {/* Proposals List */}
-      <div key={`proposals-${refreshKey}`}>
-        <h2 style={{ marginBottom: '20px', color: '#333' }}>
-          Proposals ({proposalCount})
-        </h2>
-        <ProposalList 
-          daoAddress={daoAddress} 
-          isMember={isMember || false}
-          onProposalUpdate={handleDataUpdate}
-        />
-      </div>
     </div>
   )
 }

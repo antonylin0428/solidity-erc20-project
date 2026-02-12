@@ -5,7 +5,7 @@ import ClubDAOABI from '../../../artifacts/contracts/ClubDAO.sol/ClubDAO.json'
 import ProposalActionPreview from './ProposalActionPreview'
 import VotingChart from './VotingChart'
 
-function ProposalCard({ daoAddress, proposalId, isMember, userAddress, searchTerm = '', statusFilter = 'all', onProposalUpdate }) {
+function ProposalCard({ daoAddress, proposalId, isMember, userAddress, searchTerm = '', statusFilter = 'all', onProposalUpdate, onViewDetails }) {
     const toast = useToast()
     // Get NFT address for member count in voting chart
     const { data: membershipNFTAddress } = useReadContract({
@@ -140,6 +140,36 @@ function ProposalCard({ daoAddress, proposalId, isMember, userAddress, searchTer
                     </div>
                 </div>
             </div>
+
+            {/* View Details Button */}
+            {onViewDetails && (
+                <button
+                    onClick={() => onViewDetails(proposalId)}
+                    style={{
+                        width: '100%',
+                        padding: '10px',
+                        background: '#f8f9fa',
+                        border: '1px solid #ddd',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                        fontWeight: '500',
+                        color: '#667eea',
+                        marginBottom: '16px',
+                        transition: 'all 0.2s',
+                    }}
+                    onMouseOver={(e) => {
+                        e.target.style.background = '#667eea'
+                        e.target.style.color = 'white'
+                    }}
+                    onMouseOut={(e) => {
+                        e.target.style.background = '#f8f9fa'
+                        e.target.style.color = '#667eea'
+                    }}
+                >
+                    📋 View Full Details
+                </button>
+            )}
 
             {isMember && !isExpired && !proposal.executed && (
                 <div style={{ marginBottom: '16px' }}>
