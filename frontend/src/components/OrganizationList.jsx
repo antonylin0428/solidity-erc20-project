@@ -12,12 +12,22 @@
  * - We can read data without a wallet connection (if the contract allows)
  */
 
-import { useReadContract } from 'wagmi'
+import { useState, useMemo } from 'react'
+import { useReadContract, useAccount } from 'wagmi'
 import { CONFIG } from '../config'
 // Import ABI - path is relative to frontend/src
 import ClubDAOFactoryABI from '../../../artifacts/contracts/ClubDAOFactory.sol/ClubDAOFactory.json'
+import OrganizationFilters from './OrganizationFilters'
 
 export default function OrganizationList({ onViewDAO }) {
+  const { address: userAddress } = useAccount()
+  
+  const [filters, setFilters] = useState({
+    searchTerm: '',
+    sortBy: 'newest',
+    showOnlyMine: false,
+  })
+
   // Read the total number of organizations
   // This is a "read" operation - no transaction, no gas cost, instant
   const { data: orgCount, isLoading } = useReadContract({
@@ -28,6 +38,20 @@ export default function OrganizationList({ onViewDAO }) {
 
   // Convert BigInt to number (if it exists)
   const count = orgCount ? Number(orgCount) : 0
+  
+  // Generate list of org IDs with sorting
+  const orgIds = useMemo(() => {
+    if (!count) return []
+    let ids = Array.from({ length: count }, (_, i) => i + 1)
+    
+    // Basic sorting (newest/oldest)
+    if (filters.sortBy === 'newest') {
+      ids = ids.reverse()
+    }
+    // Note: name sorting requires fetching all org data
+    
+    return ids
+  }, [count, filters.sortBy])
 
   if (isLoading) {
     return <div>Loading organizations...</div>
@@ -55,15 +79,36 @@ export default function OrganizationList({ onViewDAO }) {
         Organizations ({count})
       </h2>
       
+      {/* Filters */}
+      <OrganizationFilters 
+        filters={filters}
+        onFiltersChange={setFilters}
+        userAddress={userAddress}
+      />
+      
+      {/* Results Count */}
+      <div style={{
+        padding: '12px 16px',
+        background: '#f8f9fa',
+        borderRadius: '6px',
+        marginBottom: '16px',
+        fontSize: '14px',
+        color: '#666',
+      }}>
+        <strong>{orgIds.length}</strong> {orgIds.length === 1 ? 'organization' : 'organizations'} found
+      </div>
+      
       <div style={{ 
         display: 'grid', 
         gap: '16px'
       }}>
-        {Array.from({ length: count }, (_, i) => (
+        {orgIds.map((orgId) => (
           <OrganizationCard 
-            key={i + 1} 
-            orgId={i + 1} 
+            key={orgId} 
+            orgId={orgId} 
             onViewDAO={onViewDAO}
+            filters={filters}
+            userAddress={userAddress}
           />
         ))}
       </div>
@@ -79,8 +124,10 @@ export default function OrganizationList({ onViewDAO }) {
  * PROPS:
  * - orgId: The organization ID
  * - onViewDAO: Callback function to view the DAO (passes daoAddress)
+ * - filters: Current filter settings
+ * - userAddress: Current user's address
  */
-function OrganizationCard({ orgId, onViewDAO }) {
+function OrganizationCard({ orgId, onViewDAO, filters, userAddress }) {
   // Read organization details from the contract
   const { data: org, isLoading } = useReadContract({
     address: CONFIG.CLUB_DAO_FACTORY_ADDRESS,
@@ -103,6 +150,22 @@ function OrganizationCard({ orgId, onViewDAO }) {
   }
 
   if (!org) {
+    return null
+  }
+
+  // Apply filters
+  const searchLower = filters.searchTerm.toLowerCase()
+  
+  // Search filter: check name and creator address
+  if (searchLower && 
+      !org.name?.toLowerCase().includes(searchLower) &&
+      !org.creator?.toLowerCase().includes(searchLower)) {
+    return null
+  }
+
+  // Show only mine filter
+  if (filters.showOnlyMine && userAddress &&
+      org.creator?.toLowerCase() !== userAddress.toLowerCase()) {
     return null
   }
 

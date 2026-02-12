@@ -3,19 +3,41 @@ import { useReadContract, useAccount } from 'wagmi'
 import { useClubDAO } from '../hooks/useClubDAO'
 import ClubDAOABI from '../../../artifacts/contracts/ClubDAO.sol/ClubDAO.json'
 import ProposalCard from './ProposalCard.jsx'
+import AdvancedProposalFilters from './AdvancedProposalFilters'
 
 export default function ProposalList({ daoAddress, isMember, onProposalUpdate, onViewDetails }) {
     const { address, isConnected } = useAccount()
     const { proposalCount } = useClubDAO(daoAddress)
     
-    const [searchTerm, setSearchTerm] = useState('')
-    const [statusFilter, setStatusFilter] = useState('all')
+    const [filters, setFilters] = useState({
+        searchTerm: '',
+        status: 'all',
+        sortBy: 'newest',
+        actionType: 'all',
+        showOnlyVoted: false,
+    })
 
-    // Fetch all proposals to enable filtering
+    // Fetch all proposals with sorting
     const proposals = useMemo(() => {
         if (!proposalCount) return []
-        return Array.from({ length: proposalCount }, (_, i) => proposalCount - i)
-    }, [proposalCount])
+        let ids = Array.from({ length: proposalCount }, (_, i) => i + 1)
+        
+        // Apply sorting
+        switch (filters.sortBy) {
+            case 'newest':
+                ids = ids.reverse() // Reverse to show newest first
+                break
+            case 'oldest':
+                // Already in order
+                break
+            // Note: mostVotes, leastVotes, closingFirst require fetching proposal data
+            // For now, these will be handled by fetching all data
+            default:
+                ids = ids.reverse()
+        }
+        
+        return ids
+    }, [proposalCount, filters.sortBy])
 
     if (proposalCount === 0) {
         return (
@@ -30,46 +52,22 @@ export default function ProposalList({ daoAddress, isMember, onProposalUpdate, o
 
     return (
         <div>
-            {/* Filters and Search Bar */}
-            <div style={{ marginBottom: '20px', padding: '20px', background: '#f8f9fa', borderRadius: '8px' }}>
-                {/* Search Bar */}
-                <div style={{ marginBottom: '16px' }}>
-                    <input
-                        type="text"
-                        placeholder="Search proposals by description..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        style={{
-                            width: '100%',
-                            padding: '12px',
-                            border: '1px solid #ddd',
-                            borderRadius: '4px',
-                            fontSize: '16px'
-                        }}
-                    />
-                </div>
+            {/* Advanced Filters */}
+            <AdvancedProposalFilters 
+                filters={filters} 
+                onFiltersChange={setFilters}
+            />
 
-                {/* Status Filter Buttons */}
-                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                    {['all', 'active', 'passed', 'failed', 'executed'].map((status) => (
-                        <button
-                            key={status}
-                            onClick={() => setStatusFilter(status)}
-                            style={{
-                                padding: '8px 16px',
-                                backgroundColor: statusFilter === status ? '#667eea' : 'white',
-                                color: statusFilter === status ? 'white' : '#333',
-                                border: '1px solid #ddd',
-                                borderRadius: '4px',
-                                cursor: 'pointer',
-                                fontWeight: statusFilter === status ? 'bold' : 'normal',
-                                textTransform: 'capitalize'
-                            }}
-                        >
-                            {status}
-                        </button>
-                    ))}
-                </div>
+            {/* Results Count */}
+            <div style={{
+                padding: '12px 16px',
+                background: '#f8f9fa',
+                borderRadius: '6px',
+                marginBottom: '16px',
+                fontSize: '14px',
+                color: '#666',
+            }}>
+                <strong>{proposals.length}</strong> {proposals.length === 1 ? 'proposal' : 'proposals'} found
             </div>
 
             {/* Proposals List */}
@@ -81,8 +79,8 @@ export default function ProposalList({ daoAddress, isMember, onProposalUpdate, o
                         proposalId={proposalId}
                         isMember={isMember}
                         userAddress={address}
-                        searchTerm={searchTerm}
-                        statusFilter={statusFilter}
+                        searchTerm={filters.searchTerm}
+                        statusFilter={filters.status}
                         onProposalUpdate={onProposalUpdate}
                         onViewDetails={onViewDetails}
                     />

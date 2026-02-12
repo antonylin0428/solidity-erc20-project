@@ -26,11 +26,13 @@ import DelegationPanel from './DelegationPanel'
 import DAOSettings from './DAOSettings'
 import Treasury from './Treasury'
 import ProposalDetailView from './ProposalDetailView'
+import MemberDashboard from './MemberDashboard'
+import EventMonitor from './EventMonitor'
 
 export default function DAOView({ daoAddress, onBack }) {
   const { address, isConnected } = useAccount()
   const [refreshKey, setRefreshKey] = useState(0)
-  const [view, setView] = useState('list') // 'list' or 'detail'
+  const [view, setView] = useState('overview') // 'overview', 'proposals', 'dashboard', or 'detail'
   const [selectedProposalId, setSelectedProposalId] = useState(null)
   
   // Callback to trigger refresh without full page reload
@@ -44,9 +46,9 @@ export default function DAOView({ daoAddress, onBack }) {
     setView('detail')
   }
   
-  // Handler to go back to list view
-  const handleBackToList = () => {
-    setView('list')
+  // Handler to go back to proposals view
+  const handleBackToProposals = () => {
+    setView('proposals')
     setSelectedProposalId(null)
   }
   
@@ -170,9 +172,121 @@ export default function DAOView({ daoAddress, onBack }) {
         )}
       </div>
 
-      {/* Only show these sections in list view */}
-      {view === 'list' && (
+      {/* Navigation Tabs */}
+      {view !== 'detail' && (
+        <div style={{
+          display: 'flex',
+          gap: '8px',
+          marginBottom: '32px',
+          background: 'white',
+          padding: '8px',
+          borderRadius: '8px',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+        }}>
+          <button
+            onClick={() => setView('overview')}
+            style={{
+              padding: '14px 28px',
+              background: view === 'overview' ? '#667eea' : '#f8f9fa',
+              color: view === 'overview' ? 'white' : '#333',
+              border: view === 'overview' ? '2px solid #667eea' : '2px solid #e9ecef',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '15px',
+              fontWeight: view === 'overview' ? 'bold' : '600',
+              transition: 'all 0.2s',
+              boxShadow: view === 'overview' ? '0 4px 8px rgba(102, 126, 234, 0.3)' : 'none',
+            }}
+            onMouseEnter={(e) => {
+              if (view !== 'overview') {
+                e.target.style.background = '#e9ecef'
+                e.target.style.borderColor = '#667eea'
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (view !== 'overview') {
+                e.target.style.background = '#f8f9fa'
+                e.target.style.borderColor = '#e9ecef'
+              }
+            }}
+          >
+            🏠 Overview
+          </button>
+          <button
+            onClick={() => setView('proposals')}
+            style={{
+              padding: '14px 28px',
+              background: view === 'proposals' ? '#667eea' : '#f8f9fa',
+              color: view === 'proposals' ? 'white' : '#333',
+              border: view === 'proposals' ? '2px solid #667eea' : '2px solid #e9ecef',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '15px',
+              fontWeight: view === 'proposals' ? 'bold' : '600',
+              transition: 'all 0.2s',
+              boxShadow: view === 'proposals' ? '0 4px 8px rgba(102, 126, 234, 0.3)' : 'none',
+            }}
+            onMouseEnter={(e) => {
+              if (view !== 'proposals') {
+                e.target.style.background = '#e9ecef'
+                e.target.style.borderColor = '#667eea'
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (view !== 'proposals') {
+                e.target.style.background = '#f8f9fa'
+                e.target.style.borderColor = '#e9ecef'
+              }
+            }}
+          >
+            📋 Proposals ({proposalCount})
+          </button>
+          {isConnected && isMember && (
+            <button
+              onClick={() => setView('dashboard')}
+              style={{
+                padding: '14px 28px',
+                background: view === 'dashboard' ? '#667eea' : '#f8f9fa',
+                color: view === 'dashboard' ? 'white' : '#333',
+                border: view === 'dashboard' ? '2px solid #667eea' : '2px solid #e9ecef',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '15px',
+                fontWeight: view === 'dashboard' ? 'bold' : '600',
+                transition: 'all 0.2s',
+                boxShadow: view === 'dashboard' ? '0 4px 8px rgba(102, 126, 234, 0.3)' : 'none',
+              }}
+              onMouseEnter={(e) => {
+                if (view !== 'dashboard') {
+                  e.target.style.background = '#e9ecef'
+                  e.target.style.borderColor = '#667eea'
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (view !== 'dashboard') {
+                  e.target.style.background = '#f8f9fa'
+                  e.target.style.borderColor = '#e9ecef'
+                }
+              }}
+            >
+              📊 My Dashboard
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Overview Tab - Show DAO management sections */}
+      {view === 'overview' && (
         <>
+          {/* Real-time Event Monitoring */}
+          {membershipNFTAddress && (
+            <EventMonitor
+              daoAddress={daoAddress}
+              nftAddress={membershipNFTAddress}
+              onDataUpdate={handleDataUpdate}
+            />
+          )}
+
           {/* Treasury Section */}
           <Treasury 
             daoAddress={daoAddress}
@@ -217,16 +331,8 @@ export default function DAOView({ daoAddress, onBack }) {
         </>
       )}
 
-      {/* Proposals Section - List or Detail View */}
-      {view === 'detail' && selectedProposalId ? (
-        <ProposalDetailView
-          daoAddress={daoAddress}
-          proposalId={selectedProposalId}
-          isMember={isMember || false}
-          userAddress={address}
-          onBack={handleBackToList}
-        />
-      ) : (
+      {/* Proposals Tab - Show proposal list or detail view */}
+      {view === 'proposals' && (
         <div key={`proposals-${refreshKey}`}>
           <h2 style={{ marginBottom: '20px', color: '#333' }}>
             Proposals ({proposalCount})
@@ -238,6 +344,26 @@ export default function DAOView({ daoAddress, onBack }) {
             onViewDetails={handleViewDetails}
           />
         </div>
+      )}
+
+      {/* Proposal Detail View */}
+      {view === 'detail' && selectedProposalId && (
+        <ProposalDetailView
+          daoAddress={daoAddress}
+          proposalId={selectedProposalId}
+          isMember={isMember || false}
+          userAddress={address}
+          onBack={handleBackToProposals}
+        />
+      )}
+
+      {/* Member Dashboard Tab */}
+      {view === 'dashboard' && isConnected && isMember && (
+        <MemberDashboard
+          daoAddress={daoAddress}
+          userAddress={address}
+          isMember={isMember}
+        />
       )}
     </div>
   )
