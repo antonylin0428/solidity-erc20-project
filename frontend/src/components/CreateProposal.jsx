@@ -114,8 +114,27 @@ export default function CreateProposal({ daoAddress, onProposalCreated }) {
                 </div>
 
                 <div style={{ marginBottom: '16px' }}>
-                    <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Proposal Description</label>
-                    <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Describe what this proposal is about..." required disabled={isPending || isConfirming} rows={4} style={{ width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '4px', fontSize: '16px', fontFamily: 'inherit', resize: 'vertical' }} />
+                    <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
+                        Proposal Description
+                        <span style={{ color: '#666', fontWeight: 'normal', fontSize: '12px', marginLeft: '8px' }}>
+                            ({description.length}/500 characters - shorter = lower gas cost)
+                        </span>
+                    </label>
+                    <textarea 
+                        value={description} 
+                        onChange={(e) => setDescription(e.target.value)} 
+                        placeholder="Describe what this proposal is about..." 
+                        required 
+                        disabled={isPending || isConfirming} 
+                        rows={4} 
+                        maxLength={500}
+                        style={{ width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '4px', fontSize: '16px', fontFamily: 'inherit', resize: 'vertical' }} 
+                    />
+                    {description.length > 200 && (
+                        <div style={{ marginTop: '4px', fontSize: '12px', color: '#856404', background: '#fff3cd', padding: '8px', borderRadius: '4px' }}>
+                            ⚠️ Longer descriptions cost more gas. Consider keeping it under 200 characters to save on fees.
+                        </div>
+                    )}
                 </div>
 
                 {proposalType === 'payment' && (
