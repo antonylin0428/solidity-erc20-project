@@ -1,29 +1,15 @@
 {
-  "name": "solidity-erc20-project",
+  "name": "dao-platform",
   "version": "1.0.0",
-  "description": "ClubDAO - NFT-based decentralized autonomous organization system with membership NFTs, voting, delegation, and executable proposals",
-  "main": "index.js",
+  "private": true,
   "scripts": {
-    "test": "npx hardhat test"
+    "install": "cd frontend && npm install",
+    "build": "cd frontend && npm run build",
+    "dev": "cd frontend && npm run dev",
+    "preview": "cd frontend && npm run preview",
+    "test": "cd frontend && npm test"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/antonylin0428/solidity-erc20-project.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/antonylin0428/solidity-erc20-project/issues"
-  },
-  "homepage": "https://github.com/antonylin0428/solidity-erc20-project#readme",
-  "dependencies": {
-    "@openzeppelin/contracts": "^5.4.0",
-    "ethers": "^6.16.0"
-  },
-  "devDependencies": {
-    "@nomicfoundation/hardhat-toolbox": "^6.1.0",
-    "dotenv": "^17.2.3"
-  }
+  "workspaces": [
+    "frontend"
+  ]
 }
