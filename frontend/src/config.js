@@ -10,10 +10,10 @@
  */
 
 export const CONFIG = {
-  // The ClubDAOFactory contract address on Sepolia
+  // The ClubDAOFactory contract address on Sepolia (v2-fixed - auto-adds creator as member)
   // This is the ONLY contract we deploy manually - all other contracts
   // (NFTs, DAOs) are created by calling createOrganization() on this factory
-  CLUB_DAO_FACTORY_ADDRESS: "0x08755c93633B2C267B0242c0C520DBa26F0b6dd3",
+  CLUB_DAO_FACTORY_ADDRESS: "0x8AAe77bb135D008577a5567D2311c0335C855A93",
   
   // Sepolia testnet chain ID
   CHAIN_ID: 11155111,

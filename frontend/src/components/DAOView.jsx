@@ -317,7 +317,12 @@ export default function DAOView({ daoAddress, onBack }) {
               />
             </div>
           )}
+        </>
+      )}
 
+      {/* Proposals Tab - Show create proposal form and proposal list */}
+      {view === 'proposals' && (
+        <div key={`proposals-${refreshKey}`}>
           {/* Create Proposal Section */}
           {isConnected && (
             <div style={{ marginBottom: '32px' }}>
@@ -328,12 +333,7 @@ export default function DAOView({ daoAddress, onBack }) {
               />
             </div>
           )}
-        </>
-      )}
 
-      {/* Proposals Tab - Show proposal list or detail view */}
-      {view === 'proposals' && (
-        <div key={`proposals-${refreshKey}`}>
           <h2 style={{ marginBottom: '20px', color: '#333' }}>
             Proposals ({proposalCount})
           </h2>
