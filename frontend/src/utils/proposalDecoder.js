@@ -25,7 +25,7 @@
  */
 
 import { decodeFunctionData, formatEther } from 'viem'
-import ClubDAOABI from '../../../artifacts/contracts/ClubDAO.sol/ClubDAO.json'
+import ClubDAOABI from '../contracts/ClubDAO.json'
 
 /**
  * Function selectors (first 4 bytes of function signature hash)

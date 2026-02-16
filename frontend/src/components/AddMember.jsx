@@ -28,7 +28,7 @@ import { useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
 import { isAddress } from 'viem'
 import { useMembershipNFT } from '../hooks/useMembershipNFT'
 import { useToast } from '../hooks/useToast'
-import ClubDAOABI from '../../../artifacts/contracts/ClubDAO.sol/ClubDAO.json'
+import ClubDAOABI from '../contracts/ClubDAO.json'
 
 export default function AddMember({ daoAddress, nftAddress, isMember, onMemberAdded }) {
   const toast = useToast()

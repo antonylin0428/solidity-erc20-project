@@ -1,7 +1,7 @@
 import { useReadContract } from 'wagmi'
 import { useClubDAO } from '../hooks/useClubDAO'
 import { useToast } from '../hooks/useToast'
-import ClubDAOABI from '../../../artifacts/contracts/ClubDAO.sol/ClubDAO.json'
+import ClubDAOABI from '../contracts/ClubDAO.json'
 import ProposalActionPreview from './ProposalActionPreview'
 import VotingChart from './VotingChart'
 

@@ -18,7 +18,7 @@ import { CONFIG } from '../config'
 // Import ABI - path is relative to frontend/src, so we go up two levels to root
 // IMPORTANT: This assumes artifacts are in the root directory
 // If this doesn't work, you may need to copy the ABI to frontend/src/abis/
-import ClubDAOFactoryABI from '../../../artifacts/contracts/ClubDAOFactory.sol/ClubDAOFactory.json'
+import ClubDAOFactoryABI from '../contracts/ClubDAOFactory.json'
 
 /**
  * Hook to read data from the ClubDAOFactory contract

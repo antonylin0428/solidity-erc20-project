@@ -10,7 +10,7 @@
 
 import { useReadContract } from 'wagmi'
 import { useMemo } from 'react'
-import ClubDAOABI from '../../../artifacts/contracts/ClubDAO.sol/ClubDAO.json'
+import ClubDAOABI from '../contracts/ClubDAO.json'
 
 function VoteHistoryItem({ daoAddress, proposalId, userAddress }) {
   // Get proposal data

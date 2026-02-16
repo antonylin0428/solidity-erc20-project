@@ -24,7 +24,7 @@
  */
 
 import { useReadContract } from 'wagmi'
-import MembershipNFTABI from '../../../artifacts/contracts/MembershipNFT.sol/MembershipNFT.json'
+import MembershipNFTABI from '../contracts/MembershipNFT.json'
 
 export default function VotingChart({ 
   daoAddress,

@@ -12,8 +12,8 @@
 
 import { useWatchContractEvent } from 'wagmi'
 import { useEffect } from 'react'
-import ClubDAOABI from '../../../artifacts/contracts/ClubDAO.sol/ClubDAO.json'
-import MembershipNFTABI from '../../../artifacts/contracts/MembershipNFT.sol/MembershipNFT.json'
+import ClubDAOABI from '../contracts/ClubDAO.json'
+import MembershipNFTABI from '../contracts/MembershipNFT.json'
 import { useToast } from './useToast'
 
 export function useDAOEvents(daoAddress, nftAddress, options = {}) {

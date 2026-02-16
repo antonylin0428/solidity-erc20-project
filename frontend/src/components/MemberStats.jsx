@@ -10,7 +10,7 @@
 
 import { useReadContract } from 'wagmi'
 import { useMemo } from 'react'
-import ClubDAOABI from '../../../artifacts/contracts/ClubDAO.sol/ClubDAO.json'
+import ClubDAOABI from '../contracts/ClubDAO.json'
 
 export default function MemberStats({ daoAddress, userAddress, totalProposals }) {
   // Calculate voting stats by checking all proposals

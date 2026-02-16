@@ -8,8 +8,8 @@
  */
 
 import { useReadContract } from 'wagmi'
-import MembershipNFTABI from '../../../artifacts/contracts/MembershipNFT.sol/MembershipNFT.json'
-import ClubDAOABI from '../../../artifacts/contracts/ClubDAO.sol/ClubDAO.json'
+import MembershipNFTABI from '../contracts/MembershipNFT.json'
+import ClubDAOABI from '../contracts/ClubDAO.json'
 
 function VoterCard({ memberAddress, hasVoted, voteDirection, isLoading }) {
   if (isLoading) {

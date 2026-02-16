@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useClubDAO } from '../hooks/useClubDAO'
 import { useToast } from '../hooks/useToast'
 import { encodeFunctionData, parseEther, isAddress } from 'viem'
-import ClubDAOABI from '../../../artifacts/contracts/ClubDAO.sol/ClubDAO.json'
+import ClubDAOABI from '../contracts/ClubDAO.json'
 
 export default function CreateProposal({ daoAddress, onProposalCreated }) {
     const [proposalType, setProposalType] = useState('text')

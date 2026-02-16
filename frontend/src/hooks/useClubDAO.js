@@ -12,7 +12,7 @@
  */
 
 import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
-import ClubDAOABI from '../../../artifacts/contracts/ClubDAO.sol/ClubDAO.json'
+import ClubDAOABI from '../contracts/ClubDAO.json'
 
 export function useClubDAO(daoAddress) {
     // Only proceed if we have a valid address

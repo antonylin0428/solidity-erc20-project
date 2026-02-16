@@ -1,5 +1,5 @@
 import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
-import ClubDAOABI from '../../../artifacts/contracts/ClubDAO.sol/ClubDAO.json'
+import ClubDAOABI from '../contracts/ClubDAO.json'
 
 export function useDelegation(daoAddress, userAddress) {
   const isValid = daoAddress && userAddress

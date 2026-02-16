@@ -27,7 +27,7 @@
 
 import { useReadContract } from 'wagmi'
 import { useMembershipNFT } from '../hooks/useMembershipNFT'
-import MembershipNFTABI from '../../../artifacts/contracts/MembershipNFT.sol/MembershipNFT.json'
+import MembershipNFTABI from '../contracts/MembershipNFT.json'
 
 export default function MemberList({ nftAddress }) {
   // Get total supply to know how many members exist

@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react'
 import { useReadContract, useAccount } from 'wagmi'
 import { useClubDAO } from '../hooks/useClubDAO'
-import ClubDAOABI from '../../../artifacts/contracts/ClubDAO.sol/ClubDAO.json'
+import ClubDAOABI from '../contracts/ClubDAO.json'
 import ProposalCard from './ProposalCard.jsx'
 import AdvancedProposalFilters from './AdvancedProposalFilters'
 

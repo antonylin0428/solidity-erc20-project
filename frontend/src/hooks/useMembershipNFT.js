@@ -19,7 +19,7 @@
  */
 
 import { useReadContract } from 'wagmi'
-import MembershipNFTABI from '../../../artifacts/contracts/MembershipNFT.sol/MembershipNFT.json'
+import MembershipNFTABI from '../contracts/MembershipNFT.json'
 
 export function useMembershipNFT(nftAddress) {
   // Safety check - only query if we have a valid address

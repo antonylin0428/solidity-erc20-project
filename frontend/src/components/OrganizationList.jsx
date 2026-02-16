@@ -16,7 +16,7 @@ import { useState, useMemo } from 'react'
 import { useReadContract, useAccount } from 'wagmi'
 import { CONFIG } from '../config'
 // Import ABI - path is relative to frontend/src
-import ClubDAOFactoryABI from '../../../artifacts/contracts/ClubDAOFactory.sol/ClubDAOFactory.json'
+import ClubDAOFactoryABI from '../contracts/ClubDAOFactory.json'
 import OrganizationFilters from './OrganizationFilters'
 
 export default function OrganizationList({ onViewDAO }) {

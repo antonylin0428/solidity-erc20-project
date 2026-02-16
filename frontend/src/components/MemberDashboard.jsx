@@ -9,8 +9,8 @@
  */
 
 import { useReadContract } from 'wagmi'
-import ClubDAOABI from '../../../artifacts/contracts/ClubDAO.sol/ClubDAO.json'
-import MembershipNFTABI from '../../../artifacts/contracts/MembershipNFT.sol/MembershipNFT.json'
+import ClubDAOABI from '../contracts/ClubDAO.json'
+import MembershipNFTABI from '../contracts/MembershipNFT.json'
 import MemberStats from './MemberStats'
 import VotingHistory from './VotingHistory'
 import MembershipInfo from './MembershipInfo'
