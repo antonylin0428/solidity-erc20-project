@@ -86,6 +86,10 @@ contract ClubDAOFactory {
         // We keep factory as owner so it can manage the contract if needed
         nft.setMinter(address(dao));
         
+        // Mint the first membership NFT to the creator
+        // This makes the creator automatically a member of their own organization
+        nft.mint(msg.sender);
+        
         // Increment organization counter
         organizationCount++;
         orgId = organizationCount;
