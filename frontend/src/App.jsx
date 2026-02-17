@@ -31,6 +31,7 @@ import OrganizationList from './components/OrganizationList'
 import DAOView from './components/DAOView'
 import ToastContainer from './components/ToastContainer'
 import NetworkDebug from './components/NetworkDebug'
+import NetworkGuard from './components/NetworkGuard'
 
 function App() {
   // useState: Manages whether we should refresh the organization list
@@ -55,6 +56,9 @@ function App() {
       
       {/* Network Debug Info */}
       <NetworkDebug />
+      
+      {/* Network Guard - Blocks app if on wrong network */}
+      {isConnected && <NetworkGuard />}
       
       <div style={{
         maxWidth: '1200px',
