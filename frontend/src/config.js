@@ -13,11 +13,11 @@ export const CONFIG = {
   // The ClubDAOFactory contract address on Sepolia (v2-fixed - auto-adds creator as member)
   // This is the ONLY contract we deploy manually - all other contracts
   // (NFTs, DAOs) are created by calling createOrganization() on this factory
-  CLUB_DAO_FACTORY_ADDRESS: "0x8AAe77bb135D008577a5567D2311c0335C855A93",
-  
+  CLUB_DAO_FACTORY_ADDRESS: "0x6bdE8374C5119f61fc3730CbFBB11433cF77da06",
+
   // Sepolia testnet chain ID
   CHAIN_ID: 11155111,
-  
+
   // Public RPC endpoint for Sepolia (free, no API key needed)
   RPC_URL: "https://ethereum-sepolia-rpc.publicnode.com"
 }
