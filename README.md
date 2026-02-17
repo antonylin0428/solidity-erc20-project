@@ -414,13 +414,9 @@ npm run build
 
 ISC
 
-## Contributing
-
-Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/yourusername/solidity-erc20-project/issues).
-
 ## Author
 
-Built by [Your Name] as a demonstration of full-stack Web3 development with modern tooling (Hardhat, Wagmi v2, React 18, Vite).
+Built by Antony Lin as a demonstration of full-stack Web3 development with modern tooling (Hardhat, Wagmi v2, React 18, Vite).
 
 ## Acknowledgments
 
