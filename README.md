@@ -1,8 +1,10 @@
-# ClubDAO - Transparent Governance for Student Organizations
+# AgoraDAO - Transparent Governance for Student Organizations
 
 > **Live Demo**: [https://solidity-erc20-project.vercel.app](https://solidity-erc20-project.vercel.app)  
 > **Deployed on**: Sepolia Testnet  
 > **Factory Address**: `0x6bdE8374C5119f61fc3730CbFBB11433cF77da06`
+
+*Agora (ἀγορά): Ancient Greek marketplace and assembly where citizens gathered to discuss and vote on public matters.*
 
 ## The Problem
 

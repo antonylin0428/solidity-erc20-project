@@ -74,10 +74,10 @@ function App() {
         marginBottom: '24px'
       }}>
         <h1 style={{ marginBottom: '10px', color: '#333' }}>
-          🗳️ ClubDAO dApp
+          🏛️ AgoraDAO
         </h1>
         <p style={{ color: '#666', marginBottom: '20px' }}>
-          Create and manage decentralized autonomous organizations (DAOs) with NFT-based membership
+          Transparent governance for student organizations - Create DAOs with NFT-based membership and on-chain voting
         </p>
 
         {/* Wallet Connection Section */}
