@@ -12,6 +12,7 @@
 import { useReadContract } from 'wagmi'
 import { useClubDAO } from '../hooks/useClubDAO'
 import { useToast } from '../hooks/useToast'
+import { useProposalDescriptions } from '../hooks/useProposalDescriptions'
 import ClubDAOABI from '../contracts/ClubDAO.json'
 import MembershipNFTABI from '../contracts/MembershipNFT.json'
 import ProposalActionPreview from './ProposalActionPreview'
@@ -21,6 +22,7 @@ import VoterList from './VoterList'
 
 export default function ProposalDetailView({ daoAddress, proposalId, isMember, userAddress, onBack }) {
   const toast = useToast()
+  const { getDescription } = useProposalDescriptions(daoAddress)
 
   // Fetch proposal data
   const { data: proposal, isLoading: proposalLoading } = useReadContract({
@@ -185,7 +187,7 @@ export default function ProposalDetailView({ daoAddress, proposalId, isMember, u
                 wordBreak: 'break-word',
                 margin: 0,
               }}>
-                {proposal.description}
+                {getDescription(proposalId)}
               </p>
             </div>
 

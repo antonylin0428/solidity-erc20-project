@@ -1,12 +1,14 @@
 import { useReadContract } from 'wagmi'
 import { useClubDAO } from '../hooks/useClubDAO'
 import { useToast } from '../hooks/useToast'
+import { useProposalDescriptions } from '../hooks/useProposalDescriptions'
 import ClubDAOABI from '../contracts/ClubDAO.json'
 import ProposalActionPreview from './ProposalActionPreview'
 import VotingChart from './VotingChart'
 
 function ProposalCard({ daoAddress, proposalId, isMember, userAddress, searchTerm = '', statusFilter = 'all', onProposalUpdate, onViewDetails }) {
     const toast = useToast()
+    const { getDescription } = useProposalDescriptions(daoAddress)
     // Get NFT address for member count in voting chart
     const { data: membershipNFTAddress } = useReadContract({
         address: daoAddress,
@@ -65,8 +67,11 @@ function ProposalCard({ daoAddress, proposalId, isMember, userAddress, searchTer
     const isExpired = now > deadline
     const canExecute = proposalPassed && isExpired && !proposal.executed
 
+    // Get description from events
+    const description = getDescription(proposalId)
+
     // Filter by search term
-    if (searchTerm && !proposal.description.toLowerCase().includes(searchTerm.toLowerCase())) {
+    if (searchTerm && !description.toLowerCase().includes(searchTerm.toLowerCase())) {
         return null
     }
 
@@ -95,7 +100,7 @@ function ProposalCard({ daoAddress, proposalId, isMember, userAddress, searchTer
                     </div>
                 </div>
                 <p style={{ color: '#666', fontSize: '14px', margin: '8px 0', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
-                    {proposal.description}
+                    {description}
                 </p>
             </div>
 

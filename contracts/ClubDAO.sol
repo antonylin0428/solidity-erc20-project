@@ -26,7 +26,7 @@ contract ClubDAO is ReentrancyGuard {
     
     // Proposal struct - stores all information about a proposal
     struct Proposal {
-        string description;           // What the proposal is about
+        bytes32 descriptionHash;      // Hash of the description (stored on-chain for verification)
         address proposer;            // Who created it
         uint256 votesFor;             // Total votes in favor
         uint256 votesAgainst;         // Total votes against
@@ -71,7 +71,12 @@ contract ClubDAO is ReentrancyGuard {
     mapping(address => bool) public hasDelegated;
     
     // Events for tracking important actions
-    event ProposalCreated(uint256 indexed proposalId, address indexed proposer, string description);
+    event ProposalCreated(
+        uint256 indexed proposalId, 
+        address indexed proposer, 
+        bytes32 indexed descriptionHash, 
+        string description
+    );
     event VoteCast(uint256 indexed proposalId, address indexed voter, bool support, uint256 votes);
     event DelegationSet(address indexed delegator, address indexed delegatee);
     event DelegationRevoked(address indexed delegator);
@@ -115,13 +120,15 @@ contract ClubDAO is ReentrancyGuard {
     
     /**
      * @dev Create a new proposal
-     * @param description What the proposal is about
+     * @param description What the proposal is about (stored in events only)
      * @param target The contract address to call when executing (can be address(0) for no action)
      * @param actionData The function call data to execute
      * @param value Amount of ETH to send with the execution
      * @return proposalId The ID of the newly created proposal
      * 
-     * Anyone can create a proposal, but only members can vote.
+     * GAS OPTIMIZATION: Description is emitted in event but NOT stored in contract storage.
+     * This saves ~100,000-200,000 gas per proposal!
+     * Frontend reads descriptions from ProposalCreated event logs.
      * 
      * Example: Create a proposal to send 0.1 ETH to a pizza vendor
      * - description: "Approve $50 pizza budget"
@@ -130,15 +137,18 @@ contract ClubDAO is ReentrancyGuard {
      * - value: 0.1 ether
      */
     function createProposal(
-        string memory description,
+        string calldata description,
         address target,
-        bytes memory actionData,
+        bytes calldata actionData,
         uint256 value
     ) public returns (uint256) {
         proposalCount++;
         
+        // Compute hash of description for on-chain reference
+        bytes32 descriptionHash = keccak256(bytes(description));
+        
         proposalsById[proposalCount] = Proposal({
-            description: description,
+            descriptionHash: descriptionHash,
             proposer: msg.sender,
             votesFor: 0,
             votesAgainst: 0,
@@ -149,7 +159,8 @@ contract ClubDAO is ReentrancyGuard {
             value: value
         });
         
-        emit ProposalCreated(proposalCount, msg.sender, description);
+        // Emit full description in event (cheap!) instead of storing it (expensive!)
+        emit ProposalCreated(proposalCount, msg.sender, descriptionHash, description);
         return proposalCount;
     }
     

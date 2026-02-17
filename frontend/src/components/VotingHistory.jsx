@@ -10,9 +10,10 @@
 
 import { useReadContract } from 'wagmi'
 import { useMemo } from 'react'
+import { useProposalDescriptions } from '../hooks/useProposalDescriptions'
 import ClubDAOABI from '../contracts/ClubDAO.json'
 
-function VoteHistoryItem({ daoAddress, proposalId, userAddress }) {
+function VoteHistoryItem({ daoAddress, proposalId, userAddress, getDescription }) {
   // Get proposal data
   const { data: proposal } = useReadContract({
     address: daoAddress,
@@ -105,7 +106,7 @@ function VoteHistoryItem({ daoAddress, proposalId, userAddress }) {
         WebkitBoxOrient: 'vertical',
         overflow: 'hidden',
       }}>
-        {proposal.description}
+        {getDescription(proposalId)}
       </p>
 
       {/* Footer with Status and Vote Count */}
@@ -154,6 +155,8 @@ function VoteHistoryItem({ daoAddress, proposalId, userAddress }) {
 }
 
 export default function VotingHistory({ daoAddress, userAddress, totalProposals }) {
+  const { getDescription } = useProposalDescriptions(daoAddress)
+  
   // Generate list of proposal IDs (newest first)
   const proposalIds = useMemo(() => {
     if (!totalProposals) return []
@@ -210,6 +213,7 @@ export default function VotingHistory({ daoAddress, userAddress, totalProposals 
                 daoAddress={daoAddress}
                 proposalId={proposalId}
                 userAddress={userAddress}
+                getDescription={getDescription}
               />
             ))}
           </div>
