@@ -30,6 +30,7 @@ import CreateOrganization from './components/CreateOrganization'
 import OrganizationList from './components/OrganizationList'
 import DAOView from './components/DAOView'
 import ToastContainer from './components/ToastContainer'
+import NetworkDebug from './components/NetworkDebug'
 
 function App() {
   // useState: Manages whether we should refresh the organization list
@@ -51,6 +52,9 @@ function App() {
     <>
       {/* Toast Notifications */}
       <ToastContainer />
+      
+      {/* Network Debug Info */}
+      <NetworkDebug />
       
       <div style={{
         maxWidth: '1200px',

@@ -43,3 +43,11 @@ export const config = createConfig({
   },
 })
 
+// Debug: Log network configuration on load
+console.log('=== WAGMI CONFIG ===')
+console.log('Configured chains:', config.chains.map(c => ({ id: c.id, name: c.name })))
+console.log('Sepolia chain ID:', sepolia.id)
+console.log('Expected chain ID:', 11155111)
+console.log('Match?', sepolia.id === 11155111 ? 'YES ✅' : 'NO ❌')
+console.log('===================')
+
