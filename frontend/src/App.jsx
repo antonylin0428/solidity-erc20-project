@@ -32,8 +32,12 @@ import DAOView from './components/DAOView'
 import ToastContainer from './components/ToastContainer'
 import NetworkDebug from './components/NetworkDebug'
 import NetworkGuard from './components/NetworkGuard'
+import LandingPage from './components/LandingPage'
 
 function App() {
+  // useState: Controls whether to show landing page or main app
+  const [showLandingPage, setShowLandingPage] = useState(true)
+
   // useState: Manages whether we should refresh the organization list
   // When an organization is created, we set this to trigger a refresh
   const [refreshKey, setRefreshKey] = useState(0)
@@ -49,6 +53,19 @@ function App() {
     address: address,
   })
 
+  // If showing landing page, render it
+  if (showLandingPage) {
+    return (
+      <>
+        {/* Toast Notifications */}
+        <ToastContainer />
+        
+        <LandingPage onGetStarted={() => setShowLandingPage(false)} />
+      </>
+    )
+  }
+
+  // Main app view
   return (
     <>
       {/* Toast Notifications */}
@@ -73,12 +90,31 @@ function App() {
         boxShadow: '0 10px 40px rgba(0,0,0,0.1)',
         marginBottom: '24px'
       }}>
-        <h1 style={{ marginBottom: '10px', color: '#333' }}>
-          🏛️ AgoraDAO
-        </h1>
-        <p style={{ color: '#666', marginBottom: '20px' }}>
-          Transparent governance for student organizations - Create DAOs with NFT-based membership and on-chain voting
-        </p>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
+          <div>
+            <h1 style={{ marginBottom: '10px', color: '#333' }}>
+              🏛️ AgoraDAO
+            </h1>
+            <p style={{ color: '#666', marginBottom: '0' }}>
+              Transparent governance for student organizations - Create DAOs with NFT-based membership and on-chain voting
+            </p>
+          </div>
+          <button
+            onClick={() => setShowLandingPage(true)}
+            style={{
+              padding: '8px 16px',
+              fontSize: '14px',
+              backgroundColor: '#f8f9fa',
+              color: '#667eea',
+              border: '2px solid #667eea',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontWeight: 'bold',
+            }}
+          >
+            ← Back to Home
+          </button>
+        </div>
 
         {/* Wallet Connection Section */}
         {!isConnected ? (
